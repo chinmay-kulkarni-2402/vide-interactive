@@ -40,12 +40,11 @@ function handlePageSelection() {
 }
 
 function askCanvasSize(numPages) {
-  // Create modal for canvas selection
   editor.Modal.setTitle("Select Canvas Size");
   editor.Modal.setContent(`
     <div>
       <label for="canvasSizeSelect">Choose Canvas Size:</label>
-      <select id="canvasSizeSelect" class="form-control" onchange="handleSizeChange()">
+      <select id="canvasSizeSelect" class="form-control">
         <option value="A4">A4 (595px x 842px)</option>
         <option value="720p">720p (1280px x 720px)</option>
         <option value="custom">Custom Size</option>
@@ -65,11 +64,16 @@ function askCanvasSize(numPages) {
 
   editor.Modal.open();
 
-  // Add event listener to Confirm button
+  // ✅ Bind events *after* modal is rendered
+  document
+    .getElementById("canvasSizeSelect")
+    .addEventListener("change", handleSizeChange);
+
   document
     .getElementById("confirmCanvasSize")
     .addEventListener("click", () => handleCanvasSelection(numPages));
 }
+
 
 // 🎯 Handle size selection and custom input visibility
 function handleSizeChange() {
@@ -149,16 +153,16 @@ function createSlides(numPages, width, height) {
    window.presentationState.slides = slides;
   const slidesContainer = document.createElement("div");
   slidesContainer.id = "slides-thumbnails";
-  slidesContainer.style.position = "fixed";
+  slidesContainer.style.position = "sticky";
   slidesContainer.style.bottom = "0";
   slidesContainer.style.left = "0";
-  slidesContainer.style.right = "0";
+  slidesContainer.style.width = "82.9%";
   slidesContainer.style.zIndex = "999";
   slidesContainer.style.display = "flex";
   slidesContainer.style.overflowX = "auto";
   slidesContainer.style.background = "#f9f9f9";
   slidesContainer.style.padding = "10px 15px";
-  slidesContainer.style.borderTop = "1px solid #ccc";
+  slidesContainer.style.border = "1px solid #ccc";
   slidesContainer.style.alignItems = "center";
 
   function createDeleteButton(thumbnail, slideIndex) {
@@ -425,6 +429,14 @@ function createSlides(numPages, width, height) {
 
   slidesContainer.appendChild(addSlideBtn);
   document.body.appendChild(slidesContainer);
+
+  // ✅ Modify iframe styling
+const iframe = document.querySelector("iframe.i_designer-frame");
+if (iframe) {
+  iframe.style.height = "89.16%";
+  iframe.style.margin = "0";
+}
+document.body.style.overflow = "hidden";
 
 
   // Only show the download button if a "videoIn" component is added
